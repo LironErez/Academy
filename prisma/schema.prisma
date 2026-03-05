@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum OptInSource {
+  TIKTOK
+  INSTAGRAM
+  DISCORD
+  ORGANIC
+  OTHER
+}
+
+model OptIn {
+  id             String      @id @default(cuid())
+  email          String
+  source         OptInSource
+  channel        String
+  consent_status String      @default("active")
+  created_at     DateTime    @default(now())
+}
+
+model Order {
+  id                   String   @id @default(cuid())
+  email                String
+  tier                 String
+  payment_processor    String
+  status               String   @default("PENDING")
+  processor_ref        String?
+  amount_agorot        Int
+  is_upgrade           Boolean  @default(false)
+  upgrade_price_agorot Int?
+  failure_reason       String?
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+}
+
+model Buyer {
+  id                    String    @id @default(cuid())
+  email                 String    @unique
+  name                  String
+  discord_username      String?
+  discord_role_assigned Boolean   @default(false)
+  tier                  String
+  purchase_date         DateTime
+  payment_ref           String
+  payment_processor     String
+  oto_purchased         Boolean   @default(false)
+  kit_subscriber_id     String?
+  created_at            DateTime  @default(now())
+  updated_at            DateTime  @updatedAt
+}
+
+model Module {
+  id                  String   @id @default(cuid())
+  title               String
+  discord_channel_url String
+  drip_day            Int
+  is_active           Boolean  @default(true)
+  created_at          DateTime @default(now())
+}
+
+model EmailEvent {
+  id            String    @id @default(cuid())
+  buyer_id      String
+  sequence_name String
+  sent_at       DateTime?
+  opened_at     DateTime?
+}
+
+model ProofAsset {
+  id          String   @id @default(cuid())
+  type        String
+  filename    String
+  storage_url String
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+}
+
+model DeletionLog {
+  id         String   @id @default(cuid())
+  buyer_id   String   // No FK relation — buyer record is deleted
+  deleted_at DateTime @default(now())
+  deleted_by String
+  reason     String?
+}
