@@ -17,13 +17,13 @@ COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 
-# Copy Prisma schema, migrations, and generated client
+# Copy Prisma schema and generated client
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./
 COPY --from=builder /app/src/generated ./src/generated
 
-# Install Prisma CLI + dotenv for migration at startup
-RUN npm install prisma@7.4 dotenv
+# Install Prisma CLI for db push at startup
+RUN npm install prisma@7.4
 
 EXPOSE 3000
-ENTRYPOINT ["sh", "-c", "./node_modules/.bin/prisma migrate deploy && node server.js"]
+ENTRYPOINT ["sh", "-c", "./node_modules/.bin/prisma db push --skip-generate && node server.js"]
