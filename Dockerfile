@@ -26,4 +26,4 @@ COPY --from=builder /app/src/generated ./src/generated
 RUN npm install prisma@7.4
 
 EXPOSE 3000
-ENTRYPOINT ["sh", "-c", "./node_modules/.bin/prisma db push --skip-generate && node server.js"]
+ENTRYPOINT ["sh", "-c", "./node_modules/.bin/prisma db push && node server.js"]
